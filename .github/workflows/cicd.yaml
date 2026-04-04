@@ -10,23 +10,31 @@ jobs:
     runs-on: self-hosted
 
     steps:
+      # ---------- PRE-CLEANUP ----------
+      - name: Cleanup Docker on self-hosted runner
+        run: |
+          docker system prune -af
+          docker builder prune -af
+
+      # ---------- CHECKOUT ----------
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # -------- Backend --------
+      # ---------- BACKEND ----------
       - name: Build Backend Docker Image
         working-directory: bootrestbook
         run: |
           docker build -t book-backend .
 
-      # -------- Frontend --------
+      # ---------- FRONTEND ----------
       - name: Build Frontend Docker Image
         working-directory: bookApplication
         run: |
           docker build -t book-frontend .
 
-      # -------- Deploy --------
+      # ---------- DEPLOY ----------
       - name: Deploy using Docker Compose
         run: |
           docker-compose down
           docker-compose up -d
+
