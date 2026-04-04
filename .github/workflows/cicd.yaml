@@ -1,0 +1,32 @@
+name: Full Stack CI/CD (Self-Hosted)
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # -------- Backend --------
+      - name: Build Backend Docker Image
+        working-directory: bootrestbook
+        run: |
+          docker build -t book-backend .
+
+      # -------- Frontend --------
+      - name: Build Frontend Docker Image
+        working-directory: bookApplication
+        run: |
+          docker build -t book-frontend .
+
+      # -------- Deploy --------
+      - name: Deploy using Docker Compose
+        run: |
+          docker-compose down
+          docker-compose up -d
